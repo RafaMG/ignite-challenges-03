@@ -34,19 +34,16 @@ const Home = (): JSX.Element => {
 
   useEffect(() => {
     async function loadProducts() {
-      api.get('products').then(response => {
-        const productData = response.data;
-        
-        const data = productData.map((product: Product) => {
-          return { 
-            ...product,
-            priceFormatted: formatPrice(product.price)
-          };
-        });
+      const response = await api.get<Product[]>('products');
 
-        setProducts(data);
-      });
+      const data = response.data.map(product => ({
+        ...product,
+        priceFormatted: formatPrice(product.price)
+      }));
+
+      setProducts(data);
     }
+
     loadProducts();
   }, []);
 
@@ -63,10 +60,10 @@ const Home = (): JSX.Element => {
           <span>{product.priceFormatted}</span>
           <button
             type="button"
-            data-test-id="add-product-button"
+            data-testid="add-product-button"
             onClick={() => handleAddProduct(product.id)}
           >
-            <div data-test-id="cart-product-quantity">
+            <div data-testid="cart-product-quantity">
               <MdAddShoppingCart size={16} color="#FFF" />
               {cartItemsAmount[product.id] || 0}
             </div>
